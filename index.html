@@ -5,159 +5,158 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Brawl Stars Clone v3 + Online Chat</title>
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Lilita+One&display=swap');
-    body {margin:0; padding:0; background:#000; font-family:'Lilita One', cursive; display:flex; justify-content:center; align-items:center; height:100vh; overflow:hidden; user-select:none;}
-    #game-container {width:360px; height:640px; background:#002244; position:relative; overflow:hidden; border:4px solid #333; box-shadow:0 0 20px rgba(0,0,0,0.5);}
-    /* --- MAIN MENU --- */
-    #main-menu {width:100%; height:100%; display:flex; flex-direction:column; position:absolute; top:0; left:0; background:#002244;}
-    .top-bar {height:60px; background:#cd0000; border-bottom:3px solid #000; display:flex; align-items:center; padding:0 10px; color:white; flex-shrink:0;}
-    .profile-icon {width:40px; height:40px; background:white; border-radius:5px; margin-right:10px; border:2px solid black; display:flex; align-items:center; justify-content:center; color:black; font-size:20px;}
-    #player-nickname {flex-grow:1;}
-    .events-list {flex:1; overflow-y:auto; padding:10px; display:flex; flex-direction:column; gap:8px;}
-    .event-card {width:100%; height:80px; border:3px solid black; display:flex; align-items:center; padding-left:20px; color:white; font-size:24px; text-transform:uppercase; text-shadow:2px 2px 0 #000; position:relative; clip-path: polygon(0 0, 100% 0, 95% 100%, 0% 100%);}
-    .event-hotzone {background:linear-gradient(90deg,#ff3b3b,#a80000);}
-    .event-bounty {background:linear-gradient(90deg,#3bbaff,#0056a8);}
-    .event-brawlball {background:linear-gradient(90deg,#3bbaff,#0056a8);}
-    .event-powerplay {background:linear-gradient(90deg,#3b8aff,#002f6c);}
-    .event-icon {margin-right:15px; font-size:30px;}
-    .brawl-pass-banner {margin:5px 10px 10px 10px; height:50px; background:linear-gradient(90deg,#ffc000,#ff8c00); border:3px solid black; border-radius:5px; display:flex; align-items:center; justify-content:center; font-size:24px; color:white; text-shadow:1px 1px 0 black; cursor:pointer;}
-    .bottom-nav {height:60px; background:#004488; display:flex; justify-content:space-around; align-items:center; border-top:3px solid black; flex-shrink:0;}
-    .nav-item {display:flex; flex-direction:column; align-items:center; color:white; font-size:12px; cursor:pointer;}
-    .nav-icon {width:40px; height:35px; background:#0088ff; border:2px solid black; margin-bottom:3px; border-radius:5px;}
-    .nav-item.center .nav-icon {width:50px; height:50px; background:#ffd700; margin-top:-20px; border-radius:10px;}
-    /* --- BRAWL PASS --- */
-    #brawl-pass-scene {position:absolute; top:0; left:0; width:100%; height:100%; background:linear-gradient(180deg,#8e2de2,#4a00e0); display:none; z-index:100; flex-direction:column;}
-    .season-header {height:80px; background:linear-gradient(90deg,#ff9966,#ff5e62); border-bottom:4px solid #330033; display:flex; align-items:center; justify-content:flex-start; padding:0 20px; box-shadow:0 4px 10px rgba(0,0,0,0.5); gap:20px;}
-    .season-title {font-size:28px; color:white; text-shadow:3px 3px 0 #000;}
-    .season-subtitle {font-size:14px; color:#ffe600; text-shadow:1px 1px 0 #000;}
-    .bp-scroll-area {flex:1; overflow-x:auto; overflow-y:hidden; display:flex; align-items:center; padding:20px 0; position:relative;}
-    .activation-panel {min-width:110px; height:100%; display:flex; flex-direction:column; justify-content:space-around; align-items:center; padding:0 10px; z-index:2; flex-shrink:0;}
-    .pass-ticket, .free-label {background:#ffd700; border:3px solid black; padding:5px; border-radius:8px; text-align:center; box-shadow:4px 4px 0 rgba(0,0,0,0.4); font-size:14px;}
-    .progress-line {position:absolute; top:50%; left:0; width:5000px; height:8px; background:#111; border-top:4px solid #ffd700; border-bottom:4px solid #ffd700; transform:translateY(-50%); z-index:0;}
-    .track-content {display:flex; align-items:center; gap:40px; z-index:2; padding:0 20px;}
-    .tier-column {display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; position:relative; min-width:90px; flex-shrink:0;}
-    .reward-slot {width:80px; height:80px; background:linear-gradient(180deg,#4dc3ff,#0080ff); border:3px solid black; border-radius:6px; display:flex; justify-content:center; align-items:center; position:relative; box-shadow:0 4px 0 #004080;}
-    .reward-slot.paid {margin-bottom:35px;} .reward-slot.free {margin-top:35px;}
-    .reward-slot.locked::after {content:''; position:absolute; inset:0; background:rgba(0,0,0,0.4); border-radius:4px;}
-    .reward-slot.locked::before {content:'🔒'; position:absolute; top:2px; right:2px; z-index:5; font-size:14px;}
-    .reward-img {width:70%; height:70%; object-fit:contain; filter:drop-shadow(0 4px 0 rgba(0,0,0,0.4)); z-index:2;}
-    .tier-number {position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); background:#222; color:white; width:24px; height:24px; border-radius:50%; border:2px solid #555; display:flex; align-items:center; justify-content:center; font-size:12px; z-index:10;}
-    /* --- NICKNAME SCENE --- */
-    #nickname-scene {position:absolute; top:0; left:0; width:100%; height:100%; background:linear-gradient(180deg,#2c3e50,#4c6888); display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:200;}
-    /* --- ONLINE CHAT --- */
-    #chat-btn {position:absolute; bottom:70px; right:10px; background:#00c400; color:white; padding:10px 15px; border:2px solid black; border-radius:10px; cursor:pointer; font-size:16px; z-index:500;}
-    #chat-window {position:absolute; bottom:140px; right:10px; width:220px; max-height:300px; background:rgba(0,0,0,0.9); border:2px solid #444; border-radius:10px; display:none; flex-direction:column; z-index:500; overflow:hidden;}
-    #chat-messages {flex:1; padding:5px; overflow-y:auto; color:white; font-size:14px;}
-    #chat-input-container {display:flex; border-top:1px solid #444;}
-    #chat-input {flex:1; padding:5px; border:none; outline:none; background:#222; color:white; font-size:14px;}
-    #chat-send {background:#00c400; border:none; color:white; padding:5px 10px; cursor:pointer;}
+@import url('https://fonts.googleapis.com/css2?family=Lilita+One&display=swap');
+body {margin:0; padding:0; background:#000; font-family:'Lilita One', cursive; display:flex; justify-content:center; align-items:center; height:100vh; overflow:hidden; user-select:none;}
+#game-container {width:360px; height:640px; background:#002244; position:relative; overflow:hidden; border:4px solid #333; box-shadow:0 0 20px rgba(0,0,0,0.5);}
+#main-menu {width:100%; height:100%; display:flex; flex-direction:column; position:absolute; top:0; left:0; background-color:#002244;}
+.top-bar {height:60px; background:#cd0000; border-bottom:3px solid #000; display:flex; align-items:center; padding:0 10px; color:white; flex-shrink:0;}
+.profile-icon {width:40px; height:40px; background:white; border-radius:5px; margin-right:10px; border:2px solid black; display:flex; align-items:center; justify-content:center; color:black; font-size:20px;}
+.events-list {flex:1; overflow-y:auto; padding:10px; display:flex; flex-direction:column; gap:8px;}
+.event-card {width:100%; height:80px; border:3px solid black; display:flex; align-items:center; padding-left:20px; color:white; font-size:24px; text-transform:uppercase; text-shadow:2px 2px 0 #000; position:relative; clip-path: polygon(0 0, 100% 0, 95% 100%, 0% 100%);}
+.event-hotzone {background: linear-gradient(90deg,#ff3b3b,#a80000);}
+.event-bounty {background: linear-gradient(90deg,#3bbaff,#0056a8);}
+.event-brawlball {background: linear-gradient(90deg,#3bbaff,#0056a8);}
+.event-powerplay {background: linear-gradient(90deg,#3b8aff,#002f6c);}
+.event-icon {margin-right:15px; font-size:30px;}
+.brawl-pass-banner {margin:5px 10px 10px 10px; height:50px; background:linear-gradient(90deg,#ffc000,#ff8c00); border:3px solid black; border-radius:5px; display:flex; align-items:center; justify-content:center; font-size:24px; color:white; text-shadow:1px 1px 0 black; cursor:pointer;}
+.bottom-nav {height:60px; background:#004488; display:flex; justify-content:space-around; align-items:center; border-top:3px solid black; flex-shrink:0;}
+.nav-item {display:flex; flex-direction:column; align-items:center; color:white; font-size:12px; cursor:pointer;}
+.nav-icon {width:40px; height:35px; background:#0088ff; border:2px solid black; margin-bottom:3px; border-radius:5px;}
+.nav-item.center .nav-icon {width:50px; height:50px; background:#ffd700; margin-top:-20px; border-radius:10px;}
+#brawl-pass-scene {position:absolute; top:0; left:0; width:100%; height:100%; background:linear-gradient(180deg,#8e2de2,#4a00e0); display:none; z-index:100; flex-direction:column;}
+.season-header {height:80px; background:linear-gradient(90deg,#ff9966,#ff5e62); border-bottom:4px solid #330033; display:flex; align-items:center; justify-content:flex-start; padding:0 20px; box-shadow:0 4px 10px rgba(0,0,0,0.5); gap:20px;}
+.season-title {font-size:28px; color:white; text-shadow:3px 3px 0 #000;}
+.season-subtitle {font-size:14px; color:#ffe600; text-shadow:1px 1px 0 #000;}
+.bp-scroll-area {flex:1; overflow-x:auto; overflow-y:hidden; display:flex; align-items:center; padding:20px 0; position:relative;}
+.activation-panel {min-width:110px; height:100%; display:flex; flex-direction:column; justify-content:space-around; align-items:center; padding:0 10px; z-index:2; flex-shrink:0;}
+.pass-ticket, .free-label {background:#ffd700; border:3px solid black; padding:5px; border-radius:8px; text-align:center; box-shadow:4px 4px 0 rgba(0,0,0,0.4); font-size:14px;}
+.progress-line {position:absolute; top:50%; left:0; width:5000px; height:8px; background:#111; border-top:4px solid #ffd700; border-bottom:4px solid #ffd700; transform:translateY(-50%); z-index:0;}
+.track-content {display:flex; align-items:center; gap:40px; z-index:2; padding:0 20px;}
+.tier-column {display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; position:relative; min-width:90px; flex-shrink:0;}
+.reward-slot {width:80px; height:80px; background:linear-gradient(180deg,#4dc3ff,#0080ff); border:3px solid black; border-radius:6px; display:flex; justify-content:center; align-items:center; position:relative; box-shadow:0 4px 0 #004080;}
+.reward-slot.paid {margin-bottom:35px;}
+.reward-slot.free {margin-top:35px;}
+.reward-slot.locked::after {content:''; position:absolute; inset:0; background:rgba(0,0,0,0.4); border-radius:4px;}
+.reward-slot.locked::before {content:'🔒'; position:absolute; top:2px; right:2px; z-index:5; font-size:14px;}
+.reward-slot.chromatic {background:linear-gradient(135deg,#ff00cc,#cc00ff,#00ccff); border:3px solid #ffccff; box-shadow:0 0 10px #ff00cc;}
+.reward-img {width:70%; height:70%; object-fit:contain; filter:drop-shadow(0 4px 0 rgba(0,0,0,0.4)); z-index:2;}
+.tier-number {position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); background:#222; color:white; width:24px; height:24px; border-radius:50%; border:2px solid #555; display:flex; align-items:center; justify-content:center; font-size:12px; z-index:10;}
+#nickname-scene {position:absolute; top:0; left:0; width:100%; height:100%; background:linear-gradient(180deg,#2c3e50,#4c6888); display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:200;}
+.nickname-box {background:white; border-radius:10px; padding:20px; box-shadow:0 10px 20px rgba(0,0,0,0.5); text-align:center; width:80%;}
+#submit-btn {background:#00c400; color:white; padding:10px 20px; border:3px solid black; border-radius:8px; cursor:pointer; font-size:20px; box-shadow:2px 4px 0 #008800;}
+/* --- Chat --- */
+#chat-window {position:absolute; bottom:60px; left:0; width:100%; height:200px; background:rgba(0,0,0,0.9); display:none; flex-direction:column; z-index:150; border-top:2px solid #fff;}
+#chat-box {flex:1; overflow-y:auto; padding:5px; color:white; font-size:14px;}
+#chat-input-container {display:flex; gap:5px; padding:5px;}
+#chat-input {flex:1; padding:5px; border-radius:5px; border:1px solid #ccc;}
+#chat-send-btn {padding:5px 10px; border-radius:5px; border:none; background:#00c400; color:white; cursor:pointer;}
 </style>
 </head>
 <body>
-
 <div id="game-container">
 
-    <div id="nickname-scene">
-        <div class="icon-animation-container" id="icon-container"></div>
-        <div class="nickname-box" style="background:white; border-radius:10px; padding:20px; box-shadow:0 10px 20px rgba(0,0,0,0.5); text-align:center; width:80%;">
-            <h2 style="color:#ff9900; margin-top:0; text-shadow:1px 1px 0 #333;">Введіть Нікнейм</h2>
-            <input type="text" id="nickname-input" placeholder="Ваше ім'я Бравлера" maxlength="15" style="width:90%; padding:10px; font-size:18px; border:3px solid #ff9900; border-radius:5px; text-align:center; margin-bottom:15px; font-family: 'Lilita One', cursive;">
-            <div id="submit-btn" onclick="setNickname()" style="background:#00c400; color:white; padding:10px 20px; border:3px solid black; border-radius:8px; cursor:pointer; font-size:20px; box-shadow:2px 4px 0 #008800;">ГОТОВО</div>
+<!-- Nickname -->
+<div id="nickname-scene">
+    <div class="nickname-box">
+        <h2 style="color:#ff9900; margin-top:0; text-shadow:1px 1px 0 #333;">Введіть Нікнейм</h2>
+        <input type="text" id="nickname-input" placeholder="Ваше ім'я Бравлера" maxlength="15">
+        <div id="submit-btn" onclick="setNickname()">ГОТОВО</div>
+    </div>
+</div>
+
+<!-- Main menu -->
+<div id="main-menu" style="display:none;">
+    <div class="top-bar">
+        <div class="profile-icon">💀</div>
+        <div id="player-nickname"></div>
+        <div style="margin-left:auto; display:flex; align-items:center;">
+            <img src="Img/coin.png" style="width:20px; height:20px; margin-right:5px;" onerror="this.style.display='none'">999
         </div>
     </div>
 
-    <div id="main-menu" style="display:none;">
-        <div class="top-bar">
-            <div class="profile-icon">💀</div>
-            <div id="player-nickname"></div>
-            <div style="margin-left:auto; display:flex; align-items:center;">
-                <img src="Img/coin.png" style="width:20px; height:20px; margin-right:5px;" onerror="this.style.display='none'"> 999
-            </div>
-        </div>
-        <div class="events-list">
-            <div class="event-card event-hotzone"><span class="event-icon">🚩</span> HOT ZONE</div>
-            <div class="event-card event-bounty"><span class="event-icon">🌟</span> BOUNTY</div>
-            <div class="event-card event-brawlball"><span class="event-icon">⚽</span> BRAWL BALL</div>
-            <div class="event-card event-powerplay"><span class="event-icon">⚡</span> POWER PLAY</div>
-        </div>
-        <div class="brawl-pass-banner" onclick="openBrawlPass()">🎟️ BRAWL PASS</div>
-        <div class="bottom-nav">
-            <div class="nav-item"><div class="nav-icon" style="background:red;"></div>SHOP</div>
-            <div class="nav-item"><div class="nav-icon" style="background:purple;"></div>BRAWLERS</div>
-            <div class="nav-item center"><div class="nav-icon"></div>BRAWL</div>
-            <div class="nav-item"><div class="nav-icon" style="background:green;"></div>FRIENDS</div>
-            <div class="nav-item"><div class="nav-icon" style="background:gray;"></div>CLUB</div>
-        </div>
+    <div class="events-list">
+        <div class="event-card event-hotzone"><span class="event-icon">🚩</span> HOT ZONE</div>
+        <div class="event-card event-bounty"><span class="event-icon">🌟</span> BOUNTY</div>
+        <div class="event-card event-brawlball"><span class="event-icon">⚽</span> BRAWL BALL</div>
+        <div class="event-card event-powerplay"><span class="event-icon">⚡</span> POWER PLAY</div>
     </div>
 
-    <!-- BRAWL PASS SCENE -->
-    <div id="brawl-pass-scene"></div>
+    <div class="brawl-pass-banner" onclick="openBrawlPass()">🎟️ BRAWL PASS</div>
 
-    <!-- ONLINE CHAT -->
-    <div id="chat-btn" onclick="toggleChat()">CHAT</div>
-    <div id="chat-window">
-        <div id="chat-messages"></div>
-        <div id="chat-input-container">
-            <input type="text" id="chat-input" placeholder="Type message...">
-            <button id="chat-send">Send</button>
-        </div>
+    <div class="bottom-nav">
+        <div class="nav-item" onclick="toggleChat()"><div class="nav-icon" style="background:red;"></div>CHAT</div>
+        <div class="nav-item"><div class="nav-icon" style="background:purple;"></div>BRAWLERS</div>
+        <div class="nav-item center"><div class="nav-icon"></div>BRAWL</div>
+        <div class="nav-item"><div class="nav-icon" style="background:green;"></div>FRIENDS</div>
+        <div class="nav-item"><div class="nav-icon" style="background:gray;"></div>CLUB</div>
     </div>
+</div>
+
+<!-- Brawl Pass -->
+<div id="brawl-pass-scene">
+    <div class="season-header">
+        <div onclick="closeBrawlPass()" class="close-btn">&lt;</div>
+        <div><div class="season-subtitle">SEASON 1</div><div class="season-title">TARA'S BAZAAR</div></div>
+        <div style="margin-left:auto;"><div style="background:black; padding:5px 10px; border-radius:5px; color:white; border:2px solid #444;">💀 0 / 75</div></div>
+    </div>
+    <div class="bp-scroll-area">
+        <div class="progress-line"></div>
+        <div class="activation-panel">
+            <div class="pass-ticket"><h3>BRAWL PASS</h3><div style="font-size:30px;">🎟️</div><div style="background:#00c400; color:white; padding:5px; margin-top:5px; cursor:pointer;">ACTIVATE</div></div>
+            <div class="free-label">FREE<div style="font-size:20px;">🎟️</div></div>
+        </div>
+        <div class="track-content" id="track-content"></div>
+    </div>
+</div>
+
+<!-- Chat window -->
+<div id="chat-window">
+    <div id="chat-box"></div>
+    <div id="chat-input-container">
+        <input type="text" id="chat-input" placeholder="Написати повідомлення" onkeydown="if(event.key==='Enter'){sendMessage()}">
+        <button id="chat-send-btn" onclick="sendMessage()">Send</button>
+    </div>
+</div>
 
 </div>
 
 <script>
-    // --- NICKNAME ---
-    const playerNicknameDisplay = document.getElementById('player-nickname');
-    function setNickname(){
-        const nick = document.getElementById('nickname-input').value.trim();
-        if(nick.length<3){alert('Нікнейм має бути ≥3 символів'); return;}
-        localStorage.setItem('brawlStarsNickname', nick);
-        playerNicknameDisplay.innerText = nick;
-        document.getElementById('nickname-scene').style.display='none';
-        document.getElementById('main-menu').style.display='flex';
-    }
-    window.onload=function(){
-        const savedNick = localStorage.getItem('brawlStarsNickname');
-        if(savedNick){playerNicknameDisplay.innerText=savedNick; document.getElementById('nickname-scene').style.display='none'; document.getElementById('main-menu').style.display='flex';}
-    };
+// --- Nickname ---
+let playerNicknameDisplay = document.getElementById('player-nickname');
+function setNickname() {
+    const nicknameInput = document.getElementById('nickname-input');
+    const nickname = nicknameInput.value.trim();
+    if(nickname.length<3){alert("Нікнейм має бути довший 3 символів!"); return;}
+    localStorage.setItem('brawlStarsNickname', nickname);
+    playerNicknameDisplay.innerText = nickname;
+    document.getElementById('nickname-scene').style.display='none';
+    document.getElementById('main-menu').style.display='flex';
+}
+window.onload=function(){
+    const savedNickname=localStorage.getItem('brawlStarsNickname');
+    if(savedNickname){playerNicknameDisplay.innerText=savedNickname; document.getElementById('nickname-scene').style.display='none'; document.getElementById('main-menu').style.display='flex';}
+    else{document.getElementById('nickname-scene').style.display='flex';}
+};
 
-    // --- BRAWL PASS (скорочено) ---
-    function openBrawlPass(){alert('Brawl Pass Opened');}
-    function closeBrawlPass(){alert('Brawl Pass Closed');}
+// --- Brawl Pass ---
+const REWARDS=[{type:'box',img:'Img/box.png'},{type:'pin',img:'Img/pin_pack_icon.png'},{type:'coin',img:'Img/coin.png'},{type:'gem',img:'Img/gem.png'}];
+function generateBrawlPassData(){let data=[];data.push({tier:1,paid:{type:'gale',img:'Img/gale.png',special:true},free:{type:'box',img:'Img/box.png'}});for(let i=2;i<=60;i++){const randomFree=REWARDS[Math.floor(Math.random()*REWARDS.length)];const randomPaid=REWARDS[Math.floor(Math.random()*REWARDS.length)];data.push({tier:i,paid:{type:randomPaid.type,img:randomPaid.img},free:{type:randomFree.type,img:randomFree.img}});}data.push({tier:70,paid:{type:'gem',img:'Img/gem.png'},free:{type:'box',img:'Img/box.png'}});return data;}
+const bpData=generateBrawlPassData();const trackContent=document.getElementById('track-content');
+function getEmoji(type){if(type==='box')return'📦';if(type==='pin')return'🙂';if(type==='coin')return'💰';if(type==='gem')return'💎';if(type==='gale')return'👴🏻';return'❓';}
+function renderBrawlPass(){trackContent.innerHTML='';bpData.forEach(item=>{const column=document.createElement('div');column.className='tier-column';const isGale=item.paid.type==='gale';const paidClass=isGale?'reward-slot paid chromatic':'reward-slot paid locked';const topSlot=document.createElement('div');topSlot.className=paidClass;topSlot.innerHTML=`<img src="${item.paid.img}" class="reward-img" onerror="this.style.display='none';this.parentElement.innerHTML='${getEmoji(item.paid.type)}'">`;const number=document.createElement('div');number.className='tier-number';number.innerText=item.tier;const botSlot=document.createElement('div');botSlot.className='reward-slot free';botSlot.innerHTML=`<img src="${item.free.img}" class="reward-img" onerror="this.style.display='none';this.parentElement.innerHTML='${getEmoji(item.free.type)}'">`;column.appendChild(topSlot);column.appendChild(number);column.appendChild(botSlot);trackContent.appendChild(column);});}
+function openBrawlPass(){document.getElementById('brawl-pass-scene').style.display='flex';renderBrawlPass();document.querySelector('.bp-scroll-area').scrollLeft=0;}
+function closeBrawlPass(){document.getElementById('brawl-pass-scene').style.display='none';}
 
-    // --- ONLINE CHAT ---
-    const chatBtn = document.getElementById('chat-btn');
-    const chatWindow = document.getElementById('chat-window');
-    const chatMessages = document.getElementById('chat-messages');
-    const chatInput = document.getElementById('chat-input');
-    const chatSend = document.getElementById('chat-send');
-
-    function toggleChat(){chatWindow.style.display=(chatWindow.style.display==='flex'?'none':'flex'); chatWindow.style.flexDirection='column';}
-    
-    const WS_URL = "wss://6dca296e-1ff9-4c3e-a9f0-be46b049a086-00-1ku37tpxlo9a0.worf.replit.dev";
-    let ws;
-    function connectWS(){
-        ws = new WebSocket(WS_URL);
-        ws.onopen=()=>{console.log('WS connected'); addChatMsg('SYSTEM: Connected');};
-        ws.onmessage=(e)=>{addChatMsg('Server: '+e.data);};
-        ws.onclose=()=>{console.log('WS disconnected'); addChatMsg('SYSTEM: Disconnected, reconnecting...'); setTimeout(connectWS,2000);};
-        ws.onerror=(e)=>{console.log('WS error',e);};
-    }
-    connectWS();
-
-    function sendMsg(msg){
-        if(ws && ws.readyState===WebSocket.OPEN){ ws.send(msg); addChatMsg('Me: '+msg); }
-    }
-
-    chatSend.onclick=()=>{ const val=chatInput.value.trim(); if(val){sendMsg(val); chatInput.value='';}};
-    chatInput.addEventListener('keypress',e=>{if(e.key==='Enter'){chatSend.click();}});
-
-    function addChatMsg(msg){
-        const div=document.createElement('div'); div.innerHTML=msg;
-        chatMessages.appendChild(div);
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-    }
-
+// --- Chat ---
+let chatWindow=document.getElementById('chat-window');
+let chatBox=document.getElementById('chat-box');
+let chatInput=document.getElementById('chat-input');
+let ws=new WebSocket('ws://localhost:3000'); // <-- тут сервер WebSocket
+ws.onopen=()=>console.log("Підключено до чату");
+ws.onmessage=event=>{const data=JSON.parse(event.data);if(data.type==='chat'){addChatMessage(data.nickname,data.message);}};
+function sendMessage(){const msg=chatInput.value.trim();if(!msg) return; chatInput.value=''; ws.send(JSON.stringify({type:'chat',nickname:localStorage.getItem('brawlStarsNickname')||'Anon',message:msg}));}
+function addChatMessage(nickname,message){const msg=document.createElement('div');msg.innerHTML=`<b>${nickname}:</b> ${message}`;chatBox.appendChild(msg);chatBox.scrollTop=chatBox.scrollHeight;}
+function toggleChat(){chatWindow.style.display=(chatWindow.style.display==='flex')?'none':'flex';}
 </script>
 </body>
 </html>
